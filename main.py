@@ -113,14 +113,23 @@ async def on_ready():
 
         if Config.DRY_RUN:
             print(f'[MESSAGE FOR {names[i]}]')
-            print(message)
+            print(f'Your giftee is ||{names[giftees[i]]}|| !\n')
+            if m:
+                print(f'They left the following message for you: \n||{messages[giftees[i]]}||\n')
         else:
-            if user is None:
-                print("user " + user + " not found", file=sys.stderr)
-                print(message)
-            else:
-                user.send(message)
-
+            try:
+                if user is None:
+                    print("user " + names[i] + " not found", file=sys.stderr)
+                    print(message)
+                else:
+                    await user.send(f'Your giftee is ||{names[giftees[i]]}|| !\n')
+                    if Config.HAS_ADDRESS:
+                        await user.send(f'Their address is:\n||{addresses[giftees[i]]}||\n')
+                    if m:
+                        await user.send(f'They left the following message for you: \n||{messages[giftees[i]]}||\n')
+            except Forbidden:
+                print(f'User {names[i]} probably blocked DMs', file=sys.stderr)
+                exit(1)
     print("Done!")
     await client.close()
 
